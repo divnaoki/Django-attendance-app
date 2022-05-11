@@ -1,3 +1,4 @@
+from re import template
 from urllib import response
 from django.http.response import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -62,3 +63,33 @@ class PushTimecard(LoginRequiredMixin, TemplateView):
       }
     return JsonResponse(response_body)
 
+
+class AttendanceRecords(LoginRequiredMixin, TemplateView):
+  template_name = 'attend_records.html'
+  login_url = '/accounts/login'
+  def get(self, request, *args, **kwargs):
+    today = datetime.today()
+    search_year = today.year
+    search_month = today.month
+    # 年と月を絞り込む
+    month_attendances = Attendances.objects.filter(
+      user = request.user,
+      attendance_time__year = search_year,
+      attendance_time__month = search_month
+    ).order_by('attendance_time')
+
+    # context用のデータに整形
+    attendances_context = []
+    for attendance in month_attendances:
+      attendance_time = attendance.attendance_time
+      leave_time = attendance.leave_time
+      if leave_time:
+        leave_time = leave_time.strftime('%H:%M:%S')
+      day_attendance = {
+        'date': attendance_time.strftime('%Y-%m-%d'),
+        'attendance_at': attendance_time.strftime('%H:%M:%S'),
+        'leave_at': leave_time
+      }
+      attendances_context.append(day_attendance)
+    context = {'attendances': attendances_context}
+    return self.render_to_response(context)
