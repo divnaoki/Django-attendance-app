@@ -69,8 +69,17 @@ class AttendanceRecords(LoginRequiredMixin, TemplateView):
   login_url = '/accounts/login'
   def get(self, request, *args, **kwargs):
     today = datetime.today()
-    search_year = today.year
-    search_month = today.month
+    # リクエストパラメータを受け取る
+    search_param = request.GET.get('year_month')
+    if search_param:
+      # "-"で年と月を分ける
+      search_params = list(map(int, search_param.split('-')))
+      search_year = search_params[0]
+      search_month = search_params[1]
+      # リクエストがなかったら本日の年、月を入れる
+    else:
+      search_year = today.year
+      search_month = today.month
     # 年と月を絞り込む
     month_attendances = Attendances.objects.filter(
       user = request.user,
