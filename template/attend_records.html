@@ -2,6 +2,11 @@
 
 {% block title %}出勤簿{% endblock %}
 {% block navbar %}
+<ul class="navbar-nav mr-auto">
+  <li class="nav-item activate">
+    <a class="nav-link disabled" href="{% url 'records' %}">出勤簿</a>
+  </li>
+</ul>
 <span class="navbar-text">
   <a href="{% url 'logout' %}">ログアウト</a>
 </span>
@@ -37,6 +42,8 @@
         <td>{{ attendance.attendance_at }}</td>
         {% if attendance.leave_at == None %}
           <td>(勤務中)</td>
+          {% elif attendance.leave_at == 'not_pushed' %}
+          <td class="text-danger">打刻されていません</td>
         {% else %}
           <td>{{ attendance.leave_at }}</td>
         {% endif %}

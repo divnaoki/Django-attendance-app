@@ -94,6 +94,11 @@ class AttendanceRecords(LoginRequiredMixin, TemplateView):
       leave_time = attendance.leave_time
       if leave_time:
         leave_time = leave_time.strftime('%H:%M:%S')
+      else:
+        if attendance_time.date() == today.date():
+          leave_time = None
+        else:
+          leave_time = 'not_pushed'
       day_attendance = {
         'date': attendance_time.strftime('%Y-%m-%d'),
         'attendance_at': attendance_time.strftime('%H:%M:%S'),
