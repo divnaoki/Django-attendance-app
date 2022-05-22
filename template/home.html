@@ -7,6 +7,14 @@
     <li class="nav-item activate">
       <a class="nav-link" href="{% url 'records' %}">出勤簿</a>
     </li>
+    <li class="nav-item activate">
+      <a class="nav-link" href="{% url 'fix_request' %}">打刻修正</a>
+    </li>
+    {% if request.user.is_staff %}
+      <li class="nav-item activate">
+        <a class="nav-link" href="{% url 'fix_request' %}">打刻承認</a>
+      </li>
+    {% endif %}
   </ul>
   <span class="navbar-text">
     <a href="{% url 'logout' %}">ログアウト</a>
